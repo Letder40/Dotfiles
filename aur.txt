@@ -1,4 +1,3 @@
-aur.txt
 microsoft-edge-stable-bin
 nano-syntax-highlighting-git
 nerd-fonts-ubuntu-mono
