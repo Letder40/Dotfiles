@@ -1,0 +1,5 @@
+setxkbmap es &
+feh --bg-scale media/wallpaper.jpg &
+picom &
+udiskie -t & 
+nm-applet &
