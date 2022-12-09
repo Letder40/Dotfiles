@@ -90,7 +90,7 @@ keys = [
     Key([mod], "b", lazy.spawn("firefox")),
 
     #screenshot
-    Key([mod], "s", lazy.spawn("scrot -F /home/letder/media/screenshots/screenshot.jpg") ),
+    Key([mod], "s", lazy.spawn("scrot -F /home/letder/media/screenshots/screenshot.png") ),
 
     #screenshot
     Key([mod], "f", lazy.spawn("thunar") ),
@@ -173,69 +173,74 @@ screens = [
                     disable_drag=True
                 ),
                 widget.Prompt(),
-                widget.WindowName(
-                    foreground=["#00aeFF","#00aeFF"],
-                    background=["#0f1011","#0f1011"],
-                    font='UbuntuMono Nerd Font Bold',
-                    fontsize=13,
-                ),
+                widget.Spacer(
+                    background="#0f1011" 
+                    ),
                 widget.Systray(
-                    background=["#0f1011","#0f1011"],
+                    background=["#131323","#131323"],
                 ),
                 widget.Sep(
                     linewidth=0,
                     padding=10,
-                    background=["#0f1011","#0f1011"],
+                    background=["#131323","#131323"],
+                ),
+                widget.Image(
+                    filename=path.join(path.expanduser('~'), 'media', 'bar0.png')
+                ),
+                # IP TARGET 
+                widget.TextBox(
+                    background=["#001d77","#001d77"],
+                    text=" 什 ",
+                    font='UbuntuMono Nerd Font Bold',
+                    fontsize=20,
+                ),
+                widget.GenPollText(
+                    update_interval=1,
+                    font='UbuntuMono Nerd Font Bold',
+                    fontsize=16,
+                    func=lambda: subprocess.check_output("/home/letder/media/scripts/target.sh").decode("utf-8"),
+                    background="#001d77", 
                 ),
                 widget.Image(
                     filename=path.join(path.expanduser('~'), 'media', 'bar1.png')
                 ),
+                # IP HOST
                 widget.TextBox(
-                    background=["#FFC950","#FFC950"],
+                    background=["#002d77","#002d77"],
+                    text="  ",
+                    font='UbuntuMono Nerd Font Bold',
+                    fontsize=20,
+                ),
+                widget.GenPollText(
+                    update_interval=1,
+                    font='UbuntuMono Nerd Font Bold',
+                    fontsize=16,
+                    func=lambda: subprocess.check_output("/home/letder/media/scripts/local_ip.sh").decode("utf-8"),
+                    background="#002d77",
+        
+                ),
+                widget.Image(
+                    filename=path.join(path.expanduser('~'), 'media', 'bar2.png')
+                ),
+                widget.TextBox(
+                    background=["#2348ff","#2348ff"],
                     text="    "
                 ),
-                widget.Net(
+                widget.NetGraph(
                     interface='wlp5s0',
-                    background=["#FFC950","#FFC950"],
+                    fill_color='ffffff',
+                    graph_color='ffffff',
+                    border_color='#2348ff',
+                    background=["#2348ff","#2348ff"],
                     font='UbuntuMono Nerd Font',
                     fontsize=18,
                 ),
                 widget.Sep(
                     linewidth=0,
                     padding=15,
-                    background=["#FFC950","#FFC950"],
+                    background=["#2348ff","#2348ff"],
                 ),
                 #currentlayout
-                widget.Image(
-                    filename=path.join(path.expanduser('~'), 'media', 'bar2.png')
-                ),
-                widget.Sep(
-                    linewidth=0,
-                    padding=5,
-                    background=["#05F99C","#05F99C"],
-                ),
-                widget.CurrentLayoutIcon(
-                    scale=0.65,
-                    background=["#05F99C","#05F99C"],
-                    foreground=['00FF69','00FF69'],
-                ),
-                widget.CurrentLayout(
-                    background=["#05F99C","#05F99C"],
-                    foreground=['ffffff','ffffff'],
-                    font='UbuntuMono Nerd Font Bold',
-                    fontsize=18,
-                ),
-                widget.Chord(
-                    chords_colors={
-                        "launch": ("#ff0000", "#ffffff"),
-                    },
-                    name_transform=lambda name: name.upper(),
-                ),
-                widget.Sep(
-                    linewidth=0,
-                    padding=5,
-                    background=["#05F99C","#05F99C"],
-                ),
                 widget.Image(
                     filename=path.join(path.expanduser('~'), 'media', 'bar3.png')
                 ),
@@ -245,14 +250,14 @@ screens = [
                     background=["#00aeff","#00aeff"],
                 ),
                 widget.Clock(
-                    background=["#00aeff","#00aeff"],
+                        background=["#00aeff","#00aeff"],
                     foreground=['ffffff','ffffff'],
                     format=' %d/%m/%Y - %H:%M ',
                     font='UbuntuMono Nerd Font Bold',
                     fontsize=17,
                     ),            
                 ],
-            26,
+            27,
             opacity=0.95
             # border_width=[2, 0, 2, 0],  # Draw top and bottom borders
             # border_color=["ff00ff", "000000", "ff00ff", "000000"]  # Borders are magenta
