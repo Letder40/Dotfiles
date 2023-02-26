@@ -155,7 +155,10 @@ alias la='exa -a --icons --color=always -g --group-directories-first'
 alias l='exa -F --icons --color=always -g --group-directories-first'
 alias l.='exa -a | egrep "^\."'
 export EXA_COLORS="ur=36;01:uw=36;01:ux=36;01:ue=36:gr=35:gw=35:gx=35:tr=32;01:tw=32;01:tx=32;01:uu=32:un=31:sn=34:gu=32:gn=31:da=37"
+
+#env
 export TZ=/usr/share/zoneinfo/Europe/Madrid 
+export GOPATH=/usr/share/go
 
 #my_aliases
 alias ll="ls -l"
@@ -172,8 +175,12 @@ alias catp="bat -p"
 alias evil-winrm="docker run --rm -ti --name evil-winrm -v /home/foo/ps1_scripts:/ps1_scripts -v /home/foo/exe_files:/exe_files -v /home/foo/data:/data oscarakaelvis/evil-winrm"
 
 #PATH
-PATH=/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/lib/jvm/default/bin:/usr/bin/site_perl:/usr/bin/vendor_perl:/usr/bin/core_perl:/home/letder/scripts:/home/letder/workspace/dev/python  
-
+PATH=/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/lib/jvm/default/bin:/usr/bin/site_perl:/usr/bin/vendor_perl:/usr/bin/core_perl:/home/letder/scripts:/home/letder/workspace/dev/python:/home/letder/.local/lib/python3.10/site-packages:$GOROOT/bin:$GOPATH/bin
+  
+#GPAT
+GPAT=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
 
 source /home/letder/sware/normal/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 export HOME=/home/letder
+rm -r /home/letder/Desktop &>/dev/null
+echo &>/dev/null
