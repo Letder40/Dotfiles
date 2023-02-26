@@ -1,0 +1,16 @@
+#!/bin/bash
+
+function ctrl_c(){
+   rest_port=$((65535-$actual_port))
+   echo -e "\n\tno han sido escaneados $rest_port puertos"
+   echo -e "\tsaliendo..."
+   exit 1
+}
+
+trap ctrl_c INT 
+actual_port=0 
+for port in $(seq 1 65535); do 
+   bash -c "echo '' > /dev/tcp/$1/$port && echo port: $port is open" 2>/dev/null &
+   actual_port=$port
+done; wait 
+

@@ -1,0 +1,8 @@
+#!/bin/bash
+if [[ $1 == "-ud" ]] ; then
+   sudo pacman -Sy
+elif [[ $! == 0 ]]; then 
+   cat pacman | sed "s/ [0,9]*/@/g" | cut -d "@" -f1 | xargs sudo pacman -S 
+elif [[ $1 == "-v" || $2 == "-v" ]]; then 
+   cat pacman | sed "s/ [0,9]*/@/g" | cut -d "@" -f1 | xargs sudo pacman -S
+fi

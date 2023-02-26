@@ -36,6 +36,16 @@ import subprocess
 def autostart():
     subprocess.call([path.join(path.expanduser('~'), '.config', 'qtile', 'autostart.sh')])
 
+# Change of screen and move the cursor to the center of the screen 
+def screen_update_0(qtileThigs):
+    system("xdotool mousemove 2880 540")
+    system("xdotool click 3")
+
+def screen_update_1(qtileThings):
+    system("xdotool mousemove 960 540")
+    system("xdotool click 3")
+
+
 mod = "mod4"
 terminal = guess_terminal()
 
@@ -56,10 +66,10 @@ keys = [
     Key([mod, "shift"], "k", lazy.layout.shuffle_up(), desc="Move window up"),
     # Grow windows. If current window is on the edge of screen and direction
     # will be to screen edge - window would shrink.
-    Key([mod, "control"], "h", lazy.layout.grow_left(), desc="Grow window to the left"),
-    Key([mod, "control"], "l", lazy.layout.grow_right(), desc="Grow window to the right"),
-    Key([mod, "control"], "j", lazy.layout.grow_down(), desc="Grow window down"),
-    Key([mod, "control"], "k", lazy.layout.grow_up(), desc="Grow window up"),
+    Key([mod, "control"], "h", lazy.layout.shrink_main(), desc="Grow window to the left"),
+    Key([mod, "control"], "l", lazy.layout.grow_main(), desc="Grow window to the right"),
+    Key([mod, "control"], "j", lazy.layout.shrink_main(), desc="Grow window down"),
+    Key([mod, "control"], "k", lazy.layout.grow_main(), desc="Grow window up"),
     Key([mod], "n", lazy.layout.normalize(), desc="Reset all window sizes"),
     # Toggle between split and unsplit sides of stack.
     # Split = all windows displayed
@@ -80,7 +90,7 @@ keys = [
     Key([mod], "e", lazy.window.toggle_fullscreen(), desc="Togle fullscreen for the selected screen"),
     Key([mod], "r", lazy.spawncmd(), desc="Spawn a command using a prompt widget"),
 
-        # Menu
+    # Menu
     Key([mod], "m", lazy.spawn("rofi -show drun")),
 
     # Window Nav
@@ -88,12 +98,14 @@ keys = [
 
     # Firefox
     Key([mod], "b", lazy.spawn("firefox")),
+    # edge
+    Key([mod], "a", lazy.spawn("microsoft-edge-stable")),
 
     #screenshot
-    Key([mod], "s", lazy.spawn("scrot -F /home/letder/media/screenshots/screenshot.png") ),
+    Key([mod], "s", lazy.spawn("screenshot")),
 
-    #screenshot
-    Key([mod], "f", lazy.spawn("thunar") ),
+    #file manager
+    #Key([mod], "f", lazy.spawn("thunar") ),
 
 
     # Volume
@@ -106,9 +118,13 @@ keys = [
     Key([], "XF86AudioMute", lazy.spawn(
         "pactl set-sink-mute @DEFAULT_SINK@ toggle"
     )),
+
+    # screens
+    Key([mod], "0", lazy.function(screen_update_0)),
+    Key([mod], "9", lazy.function(screen_update_1)),
 ]
 
-groups = [Group(i) for i in ["   "," 爵  ","   ","   ","   ", "   "]]
+groups = [Group(i) for i in ["   ","  2 "," 爵  ","   ","   ","   ","   ", "   "]]
 
 for i, group in enumerate(groups):
     actual_key = str(i + 1)
@@ -130,8 +146,8 @@ layouts = [
     # layout.Stack(num_stacks=2),
     # layout.Bsp(),
     layout.MonadTall(**layout.conf),
-    layout.Matrix(**layout.conf),
-    #layout.MonadWide(**layout.conf),
+    #layout.Matrix(**layout.conf),
+    layout.MonadWide(**layout.conf),
     # layout.RatioTile(),
     # layout.Tile(),
     # layout.TreeTab(),
@@ -178,6 +194,119 @@ screens = [
                     ),
                 widget.Systray(
                     background=["#131323","#131323"],
+                ),
+                widget.Sep(
+                    linewidth=0,
+                    padding=10,
+                    background=["#131323","#131323"],
+                ),
+                widget.Image(
+                    filename=path.join(path.expanduser('~'), 'media', 'bar0.png')
+                ),
+                # IP TARGET 
+                widget.TextBox(
+                    background=["#001d77","#001d77"],
+                    text=" 什 ",
+                    font='UbuntuMono Nerd Font Bold',
+                    fontsize=20,
+                ),
+                widget.GenPollText(
+                    update_interval=1,
+                    font='UbuntuMono Nerd Font Bold',
+                    fontsize=16,
+                    func=lambda: subprocess.check_output("/home/letder/media/scripts/target.sh").decode("utf-8"),
+                    background="#001d77", 
+                ),
+                widget.Image(
+                    filename=path.join(path.expanduser('~'), 'media', 'bar1.png')
+                ),
+                # IP HOST
+                widget.TextBox(
+                    background=["#002d77","#002d77"],
+                    text="  ",
+                    font='UbuntuMono Nerd Font Bold',
+                    fontsize=20,
+                ),
+                widget.GenPollText(
+                    update_interval=1,
+                    font='UbuntuMono Nerd Font Bold',
+                    fontsize=16,
+                    func=lambda: subprocess.check_output("/home/letder/media/scripts/local_ip.sh").decode("utf-8"),
+                    background="#002d77",
+        
+                ),
+                widget.Image(
+                    filename=path.join(path.expanduser('~'), 'media', 'bar2.png')
+                ),
+                widget.TextBox(
+                    background=["#2348ff","#2348ff"],
+                    text="    "
+                ),
+                widget.NetGraph(
+                    interface='wlp5s0',
+                    fill_color='ffffff',
+                    graph_color='ffffff',
+                    border_color='#2348ff',
+                    background=["#2348ff","#2348ff"],
+                    font='UbuntuMono Nerd Font',
+                    fontsize=18,
+                ),
+                widget.Sep(
+                    linewidth=0,
+                    padding=15,
+                    background=["#2348ff","#2348ff"],
+                ),
+                #currentlayout
+                widget.Image(
+                    filename=path.join(path.expanduser('~'), 'media', 'bar3.png')
+                ),
+                widget.Sep(
+                    linewidth=0,
+                    padding=10,
+                    background=["#00aeff","#00aeff"],
+                ),
+                widget.Clock(
+                        background=["#00aeff","#00aeff"],
+                    foreground=['ffffff','ffffff'],
+                    format=' %d/%m/%Y - %H:%M ',
+                    font='UbuntuMono Nerd Font Bold',
+                    fontsize=17,
+                    ),            
+                ],
+            27,
+            opacity=0.95
+            # border_width=[2, 0, 2, 0],  # Draw top and bottom borders
+            # border_color=["ff00ff", "000000", "ff00ff", "000000"]  # Borders are magenta
+        ),
+    ),
+    Screen(
+        top=bar.Bar(
+            [
+                widget.GroupBox(
+                    foreground=["#f1ffff","#f1ffff"],
+                    background=["#0f1011","#0f1011"],
+                    urgent_border=["#F07178","#F07178"],
+                    font='UbuntuMono Nerd Font',
+                    fontsize=19,
+                    margin_y=3,
+                    margin_x=0,
+                    padding_y=8,
+                    padding_x=5,
+                    borderwidth=1,
+                    active=["#f1ffff","#f1ffff"],
+                    inactive=["#f1ffff","#f1ffff"],
+                    rounded=False,
+                    highlight_method='block',
+                    urgent_alert_method='block',
+                    this_current_screen_border=["#00aeFF","#00aeFF"],
+                    this_screen_border=["#5c5c5c","#5c5c5c"],
+                    other_current_screen_border=["#0f101a","#0f101a"],
+                    other_screen_border=["#0f101a","#0f101a"],
+                    disable_drag=True
+                ),
+                widget.Prompt(),
+                widget.Spacer(
+                    background="#0f1011" 
                 ),
                 widget.Sep(
                     linewidth=0,

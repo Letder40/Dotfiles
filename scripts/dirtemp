@@ -1,0 +1,6 @@
+#!/bin/bash
+time=$1
+time=$( expr $time \* 60 )
+mkdir ~/tempdir 
+sleep $time
+rm -r ~/tempdir

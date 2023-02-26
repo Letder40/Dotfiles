@@ -1,0 +1,11 @@
+#!/bin/bash
+screenshots=$(ls /home/letder/media/screenshots)
+num=1
+
+for i in $screenshots; do
+  ((num++))
+done
+
+import /home/letder/media/screenshots/screenshot-$num.png
+
+

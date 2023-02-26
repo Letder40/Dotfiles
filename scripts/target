@@ -1,0 +1,2 @@
+#!/bin/bash
+echo "$1" > /home/letder/media/scripts/target.txt
