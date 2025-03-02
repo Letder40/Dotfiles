@@ -1,5 +1,18 @@
-setxkbmap es &
-feh --bg-scale media/wallpaper.jpg &
-picom &
-udiskie -t & 
-nm-applet &
+# systray
+fcitx -d &
+volumeicon & disown
+picom & disown
+udiskie --appindicator -t & disown
+feh --bg-center /home/letder/media/wallpapers/wallpaper3.jpg
+cbatticon & disown
+blueman &
+nm-applet & disown
+
+#other services
+sudo timedatectl set-ntp true
+/usr/lib/notification-daemon-1.0/notification-daemon &
+spotify_player --daemon
+
+#misc
+setxkbmap es
+rm -r Desktop Public Templates Music Pictures Videos Documents intelephense 

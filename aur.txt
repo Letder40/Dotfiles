@@ -1,9 +1,0 @@
-microsoft-edge-stable-bin
-nano-syntax-highlighting-git
-nerd-fonts-ubuntu-mono
-packettracer
-social-engineer-toolkit
-teams
-teamviewer
-xampp
-zsh-syntax-highlighting

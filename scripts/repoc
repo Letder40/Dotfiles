@@ -1,2 +1,0 @@
-#!/bin/bash
-cp ~/workspace/dev/scripts/$1 ~/repositories/ownrepos/$2/$1

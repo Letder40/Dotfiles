@@ -1,9 +1,0 @@
-rm -r /home/letder/Desktop &
-rm -r /home/letder/packettracer & 
-keyon &
-setxkbmap es &
-feh --bg-scale media/wallpaper.jpg &
-picom &
-udiskie -t & 
-nm-applet &
-screench H
