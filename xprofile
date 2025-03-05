@@ -3,7 +3,7 @@ fcitx -d &
 volumeicon & disown
 picom & disown
 udiskie --appindicator -t & disown
-feh --bg-center /home/letder/media/wallpapers/wallpaper3.jpg
+feh --bg-center /home/letder/media/wallpapers/wallpaper.png
 cbatticon & disown
 blueman &
 nm-applet & disown

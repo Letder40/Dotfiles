@@ -124,7 +124,9 @@ function dug {
    echo "Total => ${total}GB" 
 }
 
-rm -r /home/letder/intelephense &>/dev/null
+function target {
+    echo " 󰓾  Target IP | $1 |" > /home/letder/.local/share/qtile/target_widget.txt
+}
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
@@ -133,5 +135,5 @@ export FZF_DEFAULT_OPTS='--color=fg:#f8f8f2,hl:#bd93f9 --color=fg+:#f8f8f2,bg+:#
 source <(fzf --zsh)
 
 if command -v tmux &> /dev/null && [ -n "$PS1" ] && [[ ! "$TERM" =~ screen ]] && [[ ! "$TERM" =~ tmux ]] && [ -z "$TMUX" ]; then
-  exec tmux
+    exec tmux
 fi
