@@ -49,8 +49,7 @@ source $ZSH/oh-my-zsh.sh
 
 export MANPATH="/usr/local/man:$MANPATH"
 export EDITOR="nvim"
-
-# export LANG=en_US.UTF-8
+export LANG=es_ES.UTF-8
 
 # Compilation flags
 # export ARCHFLAGS="-arch x86_64"
@@ -70,7 +69,6 @@ alias l.='exa -a | egrep "^\."'
 export EXA_COLORS="ur=36;01:uw=36;01:ux=36;01:ue=36:gr=35:gw=35:gx=35:tr=32;01:tw=32;01:tx=32;01:uu=32:un=31:sn=34:gu=32:gn=31:da=37"
 
 ###########
-
 
 ### ALIAS ###
 
@@ -102,13 +100,13 @@ alias オフ="shutdown now"
 ############
 
 ### FUNCTIONS ###
-function man {
+man() {
   /usr/bin/man $* | \
     col -b | \
     nvim -R -c 'set ft=man nomod nolist' -
 }
 
-function dug {
+dug() {
    disk_usage=$(du -h -d1 . 2>/dev/null | grep -E "^[0-9]+.[0-9]+G" | head -n-1)
    files=($(du -h -d1 2>/dev/null | grep -E "^[0-9]+.[0-9]+G" | head -n-1 | awk '{print $2}' | sed 's/.\///' | tr "\n" " "))
    size_numbers=($(echo $disk_usage | awk '{print $1}' | tr -d 'G' | tr "\n" ' '))
@@ -124,8 +122,16 @@ function dug {
    echo "Total => ${total}GB" 
 }
 
-function target {
-    echo " 󰓾  Target IP | $1 |" > /home/letder/.local/share/qtile/target_widget.txt
+target() {
+    echo " 󰓾  Target IP | $1 |" > /home/letder/.local/share/qtile/target_widget
+}
+
+mode() {
+    case "$1" in
+        1)  echo "paddr" > /home/letder/.local/share/qtile/mode; echo "[#] public address mode";;
+        2)  echo "target" > /home/letder/.local/share/qtile/mode; echo "[#] target mode";;
+        *)  echo "invalid mode"; return 1;;
+    esac
 }
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
@@ -133,6 +139,8 @@ function target {
 
 export FZF_DEFAULT_OPTS='--color=fg:#f8f8f2,hl:#bd93f9 --color=fg+:#f8f8f2,bg+:#44475a,hl+:#bd93f9 --color=info:#ffb86c,prompt:#50fa7b,pointer:#50fa7b --color=marker:#ff79c6,spinner:#ffb86c,header:#6272a4'
 source <(fzf --zsh)
+
+bindkey -v
 
 if command -v tmux &> /dev/null && [ -n "$PS1" ] && [[ ! "$TERM" =~ screen ]] && [[ ! "$TERM" =~ tmux ]] && [ -z "$TMUX" ]; then
     exec tmux

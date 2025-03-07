@@ -11,7 +11,7 @@ terminal = "kitty"
 
 keys = remaps.keys
 
-groups = [Group(i) for i in ["CMD", "WWW", "DEV", "VAR", "VMN", "SW1", "SW2", "SW3"]]
+groups = [Group(i) for i in ["TRM", "WWW", "DEV", "VAR", "VMN", "SW1", "SW2", "SW3"]]
 for i, group in enumerate(groups):
     actual_key = str(i + 1)
     keys.extend([

@@ -1,18 +1,20 @@
-# systray
+# Systray
 fcitx -d &
 volumeicon & disown
-picom & disown
 udiskie --appindicator -t & disown
-feh --bg-center /home/letder/media/wallpapers/wallpaper.png
 cbatticon & disown
 blueman &
 nm-applet & disown
 
-#other services
+# Appareance
+feh --bg-center /home/letder/media/wallpapers/wallpaper.png
+picom -b --config /home/letder/.config/picom.conf
+
+# Other services...
 sudo timedatectl set-ntp true
 /usr/lib/notification-daemon-1.0/notification-daemon &
 spotify_player --daemon
 
-#misc
+# Others
 setxkbmap es
 rm -r Desktop Public Templates Music Pictures Videos Documents intelephense 

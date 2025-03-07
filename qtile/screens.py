@@ -3,9 +3,28 @@ from libqtile.config import Screen
 
 import os
 import subprocess
+import requests
 
 user = os.getlogin()
-target_path = f"/home/{user}/.local/share/qtile/target_widget.txt"
+
+def dynamic_widget():
+    target_path = f"/home/{user}/.local/share/qtile/target_widget"
+    mode_path = f"/home/{user}/.local/share/qtile/mode"
+    mode = open(mode_path).readline().strip()
+
+    match mode:
+        case "paddr":
+            headers = {
+                "Content-Type": "application/json"
+            }
+            requests.get("https://ipconfig.io", headers)
+            addr_req = requests.get('https://ipconfig.io/json')
+            addr_json = addr_req.json()
+            return "   Public IP | " + addr_json["ip"] + " |"
+        case "target":
+            return open(target_path).readline().strip()
+        case _:
+            return ""
 
 widget_defaults = dict(
     font="sans",
@@ -43,14 +62,14 @@ widgets = [
         update_interval=1,
         font='UbuntuMono Nerd Font Bold',
         fontsize=18,
-        func=lambda: open(target_path).readline().strip()
+        func=lambda: subprocess.check_output(f"/home/{user}/scripts/get_addr.sh").decode("utf-8"),
     ),
 
     widget.GenPollText(
         update_interval=1,
         font='UbuntuMono Nerd Font Bold',
         fontsize=18,
-        func=lambda: subprocess.check_output(f"/home/{user}/scripts/get_addr.sh").decode("utf-8"),
+        func=lambda: dynamic_widget(),
     ),
 
     widget.Spacer(), 
@@ -82,7 +101,9 @@ widgets = [
         background=["#000000","#000000"],
     ),
 
-   widget.Clock(
+    widget.Systray(),
+
+    widget.Clock(
         background=["#000000","#000000"],
         foreground=['ffffff','ffffff'],
         format='   %d/%m/%Y - %H:%M  ',
@@ -90,6 +111,8 @@ widgets = [
         fontsize= 20,
     ),
 ]
+
+
 
 default_screen = Screen(
         top=bar.Bar(
