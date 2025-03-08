@@ -20,13 +20,9 @@ Welcome to my dotfiles repository! This repository contains configuration files 
 2. **Backup your existing configuration files** if needed.
 
 3. **Create symbolic links** from this repository to your home directory:  
-   For Neovim configuration, run:  
+   Example, for Qtile configuration, run:  
    ```bash
-   ln -s ~/dotfiles/nvim/init.vim ~/.config/nvim/init.vim  
-   ```
-   For Qtile configuration, run:  
-   ```bash
-   ln -s ~/dotfiles/qtile/config.py ~/.config/qtile/config.py
+   ln -s ~/dotfiles/qtile/ ~/.config/qtile/
    ```
 
 ## Neovim Configuration
