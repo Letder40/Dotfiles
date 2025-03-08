@@ -8,8 +8,7 @@ Welcome to my dotfiles repository! This repository contains configuration files 
 - [Neovim Configuration](#neovim-configuration)
 - [Qtile Configuration](#qtile-configuration)
 - [Usage](#usage)
-- [Screenshot](#screenshot)
-- [License](#license)
+- [Demo](#Demo)
 
 ## Installation
 
