@@ -1,6 +1,7 @@
 from libqtile import layout
 from libqtile.config import Click, Drag, Key, Match, Group
 from libqtile.lazy import lazy
+from libqtile.backend.wayland import InputConfig
 
 import screens
 import remaps
@@ -11,7 +12,7 @@ terminal = "kitty"
 
 keys = remaps.keys
 
-groups = [Group(i) for i in ["TRM", "WWW", "DEV", "VAR", "VMN", "SW1", "SW2", "SW3"]]
+groups = [Group(i) for i in [" 1 ", " 2 ", " 3 ", " 4 ", " 5 ", " 6 ", " 7 ", " 8 ", " 9 "]]
 for i, group in enumerate(groups):
     actual_key = str(i + 1)
     keys.extend([
@@ -56,6 +57,11 @@ reconfigure_screens = True
 # shutup baby don't resize
 auto_minimize = False
 # When using the Wayland backend, this can be used to configure input devices.
-wl_input_rules = None
+# When using the Wayland backend, this can be used to configure input devices.
+wl_input_rules = {
+    "type:keyboard": InputConfig(
+        kb_layout="es",
+    )
+}
 # java ui toolkits shit, i don't even use that shit but here is it, nobody knows what the future holds.
 wmname = "LG3D"

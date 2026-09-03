@@ -8,7 +8,7 @@ Key.modifier_keys = {
     "A": 'mod1',
     "S": 'shift',
     "C": 'control',
-} 
+}
 
 keys = [
     # A list of available commands that can be bound to keys can be found
@@ -42,9 +42,11 @@ keys = [
 
         # Toggle between split and unsplit sides of stack.
         # For Bsp layout:
-            # Split = Horizontaly splited panels
-            # Unsplit = Verticaly splited panels
-        Key("s", lazy.layout.toggle_split(), desc="Toggle between split and unsplit sides of stack",),
+        # Split = Horizontaly splited panels
+        # Unsplit = Verticaly splited panels
+        Key("s", lazy.layout.toggle_split(),
+            desc="Toggle between split and unsplit sides of stack",
+            ),
     ]),
 
     # software keybindings
@@ -66,4 +68,3 @@ keys = [
     Key("M-p", lazy.spawncmd(), desc="Spawn a command using a prompt widget"),
     Key("M-S-<space>", lazy.layout.flip(), desc="Move window focus to other window"),
 ]
-

@@ -1,0 +1,37 @@
+[preferences]
+terminal = "kitty"
+browser = "firefox"
+wallpaper = 0         # number -> will search ^wallpaper${number}\.* if string -> use it as the path for the wallpaper to set
+aur = "paru"          # paru/yay
+neovim = true         # Clones and setup this config https://github.com/Letder40/nvim-config/
+eza = true            # Install and set it with ../eza_theme.yml
+nerdfont = "firacode"     # A nerdfont is needed (check available fonts with pacman -Ss nerd-fonts)
+animations = true     # boolean setup picom
+
+# The following software will be installed on setup accepts an array of strings with valid software names instalable with pacman / or select aur helper
+# Change as much as you want
+
+[software]
+terminal_utils = [
+    "fd",
+    "bat",
+    "ripgrep",
+    "fzf",
+    "fastfetch",
+    "btop"
+]
+
+# will be auto started
+systray = [
+    "volumeicon",
+    "udiskie",
+    "blueman",
+    "network-manager-applet"
+]
+
+others = [
+    "discord",
+    "bitwarden",
+    "notion",
+    "zathura",
+] 

@@ -26,6 +26,7 @@ def dynamic_widget():
         case _:
             return ""
 
+
 widget_defaults = dict(
     font="sans",
     fontsize=18,
@@ -56,7 +57,7 @@ widgets = [
         disable_drag=True
     ),
 
-    widget.Spacer(), 
+    widget.Spacer(),
 
     widget.GenPollText(
         update_interval=1,
@@ -72,8 +73,8 @@ widgets = [
         func=lambda: dynamic_widget(),
     ),
 
-    widget.Spacer(), 
-    
+    widget.Spacer(),
+
     widget.TextBox(
         background=["#000000","#000000"],
         text="  ",
@@ -81,7 +82,6 @@ widgets = [
         fontsize=20,
         foreground=["#ffffff","#ffffff"],
     ),
-
     widget.NetGraph(
         interface='auto',
         fill_color='3bfc29',
@@ -94,7 +94,6 @@ widgets = [
         margin_x=10,
         line_width=3,
     ),
-        
     widget.Sep(
         linewidth=0,
         padding=15,
@@ -112,13 +111,11 @@ widgets = [
     ),
 ]
 
-
-
 default_screen = Screen(
         top=bar.Bar(
             [widget for widget in widgets],
             30,
             # border_width=[2, 0, 2, 0],  # Draw top and bottom borders
-            # border_color=["ff00ff", "000000", "ff00ff", "000000"] 
-        ) 
+            # border_color=["ff00ff", "000000", "ff00ff", "000000"]
+        )
     )

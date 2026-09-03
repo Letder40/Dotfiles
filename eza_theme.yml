@@ -1,0 +1,53 @@
+# ~/.config/eza/theme.yml
+
+perms:
+  user_read: &users_rw
+    foreground: "#75b5ff"
+    is_bold: false
+
+  user_write: *users_rw
+
+  user_execute_file: &any_x
+    foreground: Green
+    is_bold: true
+
+  user_execute_other: *any_x
+
+  group_read: &group_rw
+    foreground: "#00ffbb"
+    is_bold: false
+
+  group_write: *group_rw
+  group_execute: *any_x
+
+  other_read: &others_rw
+    foreground: "#ff4243"
+    is_bold: false
+
+  other_write: *others_rw
+  other_execute: *any_x
+
+
+users:
+  user_you: *users_rw
+  group_yours: *users_rw
+  user_other: *others_rw
+  group_other: *group_rw
+
+
+size:
+  number_byte: &normal_size
+    foreground: Blue
+
+  number_kilo: *normal_size
+  number_mega: *normal_size
+
+  number_giga: &big_size
+    foreground: Blue
+    is_bold: true
+
+  number_huge: *big_size
+
+
+date:
+  foreground: White
