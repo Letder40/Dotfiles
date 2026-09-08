@@ -37,7 +37,8 @@ def install(programs: list[str]):
         )
 
         if result.returncode != 0:
-            print(f"[error] Could not install {program}: {result.stderr.strip()}")
+            print(f"[error] Could not install {
+                  program}: {result.stderr.strip()}")
         else:
             print(f"[installed] {program}")
 
@@ -92,7 +93,8 @@ def main():
         if link.is_symlink():
             if not link.exists():
                 name = link.name
-                backup_path = link.with_name(f"{name}_{datetime.today().strftime('%Y-%m-%d_%H:%M:%S')}_bck")
+                backup_path = link.with_name(
+                    f"{name}_{datetime.today().strftime('%Y-%m-%d_%H:%M:%S')}_bck")
                 link.replace(backup_path)
                 print(f"[backup] {link} -> {backup_path}")
 
@@ -102,7 +104,8 @@ def main():
 
         elif link.exists():
             name = link.name
-            backup_path = link.with_name(f"{name}_{datetime.today().strftime('%Y-%m-%d_%H:%M:%S')}_bck")
+            backup_path = link.with_name(
+                f"{name}_{datetime.today().strftime('%Y-%m-%d_%H:%M:%S')}_bck")
             link.move(backup_path)
             print(f"[backup] {link} -> {backup_path}")
 
@@ -146,8 +149,10 @@ def main():
 
     if Path("/usr/share/icons/Papirus-Dark").exists():
         print("Downloading papirus dark theme")
-        script = subprocess.Popen(["curl", "-fsSL", "https://git.io/papirus-icon-theme-install"], stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
-        subprocess.run(["sh"], stdin=script.stdout, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        script = subprocess.Popen(["curl", "-fsSL", "https://git.io/papirus-icon-theme-install"],
+                                  stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
+        subprocess.run(["sh"], stdin=script.stdout,
+                       stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
         with open(home / ".config" / "gtk-3.0" / "settings.ini", "w+") as f:
             f.write("[settings]\ngtk-icon-theme-name = Papirus-Dark")
@@ -166,7 +171,8 @@ def main():
         nvim_path = Path.cwd() / "nvim"
         if not nvim_path.exists():
             print("[git] clonando configuración")
-            run_as_user("git", "clone", "https://github.com/Letder40/nvim-config.git", "nvim")
+            run_as_user("git", "clone",
+                        "https://github.com/Letder40/nvim-config.git", "nvim")
         else:
             print("[git] obteniendo cambios en la configuración")
             run_as_user("git", "pull", cwd=nvim_path)

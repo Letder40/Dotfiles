@@ -2,7 +2,7 @@
 user="letder"
 terminal = "kitty"
 browser = "firefox"
-wallpaper = 0         # number -> will search ^wallpaper${number}\.* in ../wallpapers; if string -> absolute path to wallpaper image
+wallpaper = 12         # number -> will search ^wallpaper${number}\.* in ../wallpapers; if string -> absolute path to wallpaper image
 neovim = true         # Clones and setup this config https://github.com/Letder40/nvim-config/
 animations = true     # boolean setup picom
 

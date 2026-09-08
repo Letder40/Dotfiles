@@ -111,4 +111,6 @@ My Neovim configuration is maintained separately:
 
 ## Demo
 
-![Setup Demo](./demo.png)
+![Setup Demo 1](./demo1.jpg)
+![Setup Demo 2](./demo2.jpg)
+![Setup Demo 3](./demo3.jpg)

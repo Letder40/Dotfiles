@@ -13,7 +13,7 @@ export ZSH="$HOME/.oh-my-zsh"
 
 zstyle ':omz:update' mode auto  # update automatically without asking
 
-CASE_SENSITIVE="true"
+CASE_SENSITIVE="false"
 DISABLE_MAGIC_FUNCTIONS="true"
 DISABLE_LS_COLORS="false"
 DISABLE_AUTO_TITLE="true"
@@ -74,6 +74,14 @@ alias lla='eza -lM@Oa --color=always --git --icons --group-directories-first --t
 alias la='eza -a --icons --color=always -g --group-directories-first'
 alias l.='eza -a | egrep "^\."'
 
+# Keymaps
+bindkey -v
+
+bindkey -r '^T'
+bindkey '\ef' fzf-file-widget
+bindkey '\ec' fzf-cd-widget
+bindkey '\eh' fzf-history-widget
+
 # FZF
 export FZF_DEFAULT_COMMAND='fd --type f --hidden --exclude .git --exclude node_modules'
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
@@ -87,13 +95,6 @@ export FZF_DEFAULT_OPTS="
   --color=info:#98c379,prompt:#61afef,pointer:#be5046,marker:#e5c07b,header:#61afef
 "
 source <(fzf --zsh)
-
-bindkey -r '^T'
-bindkey '\ef' fzf-file-widget
-bindkey '\ec' fzf-cd-widget
-
-# VIM mode
-bindkey -v
 
 # Fuck
 eval $(thefuck --alias)
