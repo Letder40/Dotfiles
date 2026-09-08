@@ -57,12 +57,12 @@ animations = true     # boolean setup picom
 [packages]
 # will be installed and auto started
 init = [
-    { exec="fcitx5 -d", package="fcitx5" }
-    { exec="volumeicon", package="volumeicon" }
-    { exec="udiskie --appindicator", package="udiskie" }
-    { exec="blueman", package="blueman" }
-    { exec="nm-applet", package="network-manager-applet" }
-    { exec="setxkbmap es", package="" }
+    { exec="fcitx5 -d", package="fcitx5" },
+    { exec="volumeicon", package="volumeicon" },
+    { exec="udiskie --appindicator", package="udiskie" },
+    { exec="blueman", package="blueman" },
+    { exec="nm-applet", package="network-manager-applet" },
+    { exec="setxkbmap es", package="" },
 ]
 
 others = [
@@ -113,4 +113,3 @@ My Neovim configuration is maintained separately:
 
 ![Setup Demo 1](./demo1.jpg)
 ![Setup Demo 2](./demo2.jpg)
-![Setup Demo 3](./demo3.jpg)
