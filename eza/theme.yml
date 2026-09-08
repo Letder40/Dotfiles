@@ -1,4 +1,4 @@
-# ~/.config/eza/theme.yml
+colorfull: true
 
 perms:
   user_read: &users_rw

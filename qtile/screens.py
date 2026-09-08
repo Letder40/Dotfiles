@@ -1,54 +1,52 @@
+from os.path import exists
+from pathlib import Path
+
 from libqtile import widget, bar
 from libqtile.config import Screen
-
-import os
+import json
 import subprocess
-import requests
 
-user = os.getlogin()
-
-def dynamic_widget():
-    target_path = f"/home/{user}/.local/share/qtile/target_widget"
-    mode_path = f"/home/{user}/.local/share/qtile/mode"
-    mode = open(mode_path).readline().strip()
-
-    match mode:
-        case "paddr":
-            headers = {
-                "Content-Type": "application/json"
-            }
-            requests.get("https://ipconfig.io", headers)
-            addr_req = requests.get('https://ipconfig.io/json')
-            addr_json = addr_req.json()
-            return "   Public IP | " + addr_json["ip"] + " |"
-        case "target":
-            return open(target_path).readline().strip()
-        case _:
-            return ""
-
+from user_config import config
 
 widget_defaults = dict(
-    font="sans",
-    fontsize=18,
+    font="FiraCode Nerd Font Mono",
+    fontsize=16,
     padding=3,
 )
+
+def getWallpaperPath() -> str:
+    try:
+        wallpaper = config["preferences"]["wallpaper"]
+        if type(wallpaper) is int:
+            name = Path.home() / "media" / "wallpapers" / f"wallpaper{wallpaper}"
+            if (name.with_suffix(".png").exists()):
+                return name.with_suffix(".png").absolute().as_posix()
+            elif (name.with_suffix(".jpg").exists()):
+                return name.with_suffix(".jpg").absolute().as_posix()
+
+        if type(wallpaper) is str and Path(wallpaper).exists():
+            return Path(wallpaper).absolute().as_posix()
+
+        return (Path.home() / "media" / "wallpapers" / "wallpaper0.png").absolute().as_posix()
+
+    except:
+        return (Path.home() / "media" / "wallpapers" / "wallpaper0.png").absolute().as_posix()
+
+def currip():
+    ip_route = subprocess.check_output(["ip", "-j", "route", "show", "default"])
+    ip_addr = json.loads(ip_route)[0]["prefsrc"]
+
+    return ip_addr
 
 widgets = [
     widget.GroupBox (
         foreground=["#f1ffff","#f1ffff"],
         background=["#0f1011","#0f1011"],
         urgent_border=["#F07178","#F07178"],
-        font='UbuntuMono Nerd Font',
-        fontsize=20,
-        margin_y=3,
-        margin_x=0,
-        padding_y=8,
-        padding_x=10,
-        borderwidth=1,
+        borderwidth=2,
         active=["#f1ffff","#f1ffff"],
         inactive=["#f1ffff","#f1ffff"],
-        rounded=False,
-        highlight_method='block',
+        highlight_method='default',
         urgent_alert_method='block',
         this_current_screen_border=["#0047AF","#0047AF"],
         this_screen_border=["#5c5c5c","#5c5c5c"],
@@ -59,28 +57,17 @@ widgets = [
 
     widget.Spacer(),
 
-    widget.GenPollText(
-        update_interval=1,
-        font='UbuntuMono Nerd Font Bold',
-        fontsize=18,
-        func=lambda: subprocess.check_output(f"/home/{user}/scripts/get_addr.sh").decode("utf-8"),
+    widget.Sep(
+        linewidth=1,
+        padding=15,
+        foreground="#ffffff",
     ),
-
-    widget.GenPollText(
-        update_interval=1,
-        font='UbuntuMono Nerd Font Bold',
-        fontsize=18,
-        func=lambda: dynamic_widget(),
-    ),
-
-    widget.Spacer(),
-
     widget.TextBox(
         background=["#000000","#000000"],
-        text="  ",
-        font='UbuntuMono Nerd Font Bold',
-        fontsize=20,
+        margin_x=10,
         foreground=["#ffffff","#ffffff"],
+        fontsize=28,
+        text="󰌗"
     ),
     widget.NetGraph(
         interface='auto',
@@ -89,33 +76,53 @@ widgets = [
         border_color='#000000',
         border_width=0,
         background=["#000000","#000000"],
-        font='UbuntuMono Nerd Font',
-        fontsize=18,
-        margin_x=10,
         line_width=3,
     ),
-    widget.Sep(
-        linewidth=0,
-        padding=15,
+    widget.TextBox(
         background=["#000000","#000000"],
+        foreground=["#ffffff","#ffffff"],
+        fontsize=28,
+        text="󰲐"
+    ),
+    widget.GenPollText(
+        update_interval=5,
+        fontsize=14,
+        func=lambda: currip(),
     ),
 
-    widget.Systray(),
+    widget.Sep(
+        linewidth=1,
+        padding=15,
+        foreground="#ffffff",
+    ),
+    widget.Systray(
+        padding=5,
+    ),
+    widget.Sep(
+        linewidth=1,
+        padding=15,
+        foreground="#ffffff",
+    ),
+
+    widget.Spacer(length=10),
 
     widget.Clock(
         background=["#000000","#000000"],
         foreground=['ffffff','ffffff'],
-        format='   %d/%m/%Y - %H:%M  ',
-        font='UbuntuMono Nerd Font',
-        fontsize= 20,
+        format=' %d/%m/%Y   %H:%M  ',
+        padding=5
     ),
 ]
 
 default_screen = Screen(
         top=bar.Bar(
-            [widget for widget in widgets],
+            widgets,
             30,
             # border_width=[2, 0, 2, 0],  # Draw top and bottom borders
             # border_color=["ff00ff", "000000", "ff00ff", "000000"]
-        )
+            margin=5,
+            opacity=0.8
+        ),
+        wallpaper=getWallpaperPath(),
+        wallpaper_mode="fill"
     )

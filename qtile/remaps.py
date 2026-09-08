@@ -1,7 +1,12 @@
 from libqtile.config import EzKey as Key, EzKeyChord as KeyChord
 from libqtile.lazy import lazy
 
-mod = "mod4"
+from user_config import config
+
+terminal = config["preferences"]["terminal"]
+browser = config["preferences"]["browser"]
+
+mod = 'mod4'
 
 Key.modifier_keys = {
     "M": mod,
@@ -19,6 +24,7 @@ keys = [
     Key("M-k", lazy.layout.up(), desc="Move focus up"),
     Key("M-l", lazy.layout.right(), desc="Move focus to right"),
     Key("M-t", lazy.layout.next(), desc="Move window focus to other window"),
+
     # Move windows between left/right columns or move up/down in current stack.
     # Moving out of range in Columns layout will create new column.
     Key("M-S-h", lazy.layout.shuffle_left(), desc="Move window to the left"),
@@ -50,8 +56,8 @@ keys = [
     ]),
 
     # software keybindings
-    Key("M-<Return>", lazy.spawn("kitty"), desc="Launch terminal"),
-    Key("M-b", lazy.spawn("firefox"), desc="Launch browser"),
+    Key("M-<Return>", lazy.spawn(terminal), desc="Launch terminal"),
+    Key("M-b", lazy.spawn(browser), desc="Launch browser"),
     Key("M-m", lazy.spawn("rofi -show drun"), desc="Launch rofi"),
     Key("M-s", lazy.spawn("flameshot gui"), desc="Launch flameshot"),
 

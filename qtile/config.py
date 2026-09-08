@@ -1,16 +1,14 @@
 from libqtile import layout
-from libqtile.config import Click, Drag, Key, Match, Group
+from libqtile.config import Click, Drag, Key, Match, Group, Output
 from libqtile.lazy import lazy
-from libqtile.backend.wayland import InputConfig
+from libqtile.backend.wayland.inputs import InputConfig
 
-import screens
-import remaps
+from screens import default_screen, widget_defaults
+from remaps import mod, keys
 import layouts
+from autostart import autostart
 
-mod = "mod4"
-terminal = "kitty"
-
-keys = remaps.keys
+widget_defaults=widget_defaults
 
 groups = [Group(i) for i in [" 1 ", " 2 ", " 3 ", " 4 ", " 5 ", " 6 ", " 7 ", " 8 ", " 9 "]]
 for i, group in enumerate(groups):
@@ -20,20 +18,24 @@ for i, group in enumerate(groups):
         Key([mod, "shift"], actual_key, lazy.window.togroup(group.name))
     ])
 
-screen_n = 1
-screens = [screens.default_screen for _ in range(screen_n)]
+def generate_screens(outputs: list[Output]):
+    screen_list = []
+    for output in outputs:
+        screen_list.append(default_screen)
+
+    return screen_list
 
 layouts = layouts.layouts
 
 # Drag floating layouts.
 mouse = [
-    Drag([remaps.mod], "Button1", lazy.window.set_position_floating(), start=lazy.window.get_position()),
-    Drag([remaps.mod], "Button3", lazy.window.set_size_floating(), start=lazy.window.get_size()),
-    Click([remaps.mod], "Button2", lazy.window.bring_to_front()),
+    Drag([mod], "Button1", lazy.window.set_position_floating(), start=lazy.window.get_position()),
+    Drag([mod], "Button3", lazy.window.set_size_floating(), start=lazy.window.get_size()),
+    Click([mod], "Button2", lazy.window.bring_to_front()),
 ]
 
 dgroups_key_binder = None
-dgroups_app_rules = []  # type: list
+dgroups_app_rules = []
 follow_mouse_focus = True
 bring_front_click = False
 cursor_warp = True
@@ -57,7 +59,6 @@ reconfigure_screens = True
 # shutup baby don't resize
 auto_minimize = False
 # When using the Wayland backend, this can be used to configure input devices.
-# When using the Wayland backend, this can be used to configure input devices.
 wl_input_rules = {
     "type:keyboard": InputConfig(
         kb_layout="es",
@@ -65,3 +66,6 @@ wl_input_rules = {
 }
 # java ui toolkits shit, i don't even use that shit but here is it, nobody knows what the future holds.
 wmname = "LG3D"
+
+# auto start of defined packages in config.toml
+autostart()

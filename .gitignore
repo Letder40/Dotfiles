@@ -1,1 +1,3 @@
 qtile/__pycache__/**
+qtile/config.toml
+nvim
