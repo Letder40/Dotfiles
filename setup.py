@@ -1,5 +1,4 @@
 #!/usr/bin/python3
-from sys import stderr, stdout
 import tomllib
 import subprocess
 from pathlib import Path
@@ -7,6 +6,7 @@ from pwd import getpwnam
 from datetime import datetime
 import shutil
 import os
+
 
 def is_root() -> bool:
     return os.getuid() == 0
@@ -72,7 +72,7 @@ def main():
         "zsh-syntax-highlighting"
     ]
 
-    username = config["preferences"]["user"] 
+    username = config["preferences"]["user"]
     user = getpwnam(username)
     uid = user.pw_uid
     gid = user.pw_gid
@@ -93,7 +93,7 @@ def main():
             if not link.exists():
                 name = link.name
                 backup_path = link.with_name(f"{name}_{datetime.today().strftime('%Y-%m-%d_%H:%M:%S')}_bck")
-                link.move(backup_path)
+                link.replace(backup_path)
                 print(f"[backup] {link} -> {backup_path}")
 
             elif link.is_symlink() and link.resolve() == target.resolve():
@@ -106,15 +106,9 @@ def main():
             link.move(backup_path)
             print(f"[backup] {link} -> {backup_path}")
 
-        else: 
-            link.mkdir(parents=True, exist_ok=True)
-            shutil.chown(link, uid, gid)
-
-
         link.symlink_to(target)
         print(f"[linked] {link} -> {target}")
 
-         
     def link_config(name: str):
         config_dir = home / ".config"
 
@@ -126,7 +120,6 @@ def main():
         target_path = Path.cwd() / name
 
         link_with_backup(config_path, target_path)
-
 
     def run_as_user(*args: str, cwd: Path | None = None):
         subprocess.run(
@@ -158,7 +151,6 @@ def main():
 
         with open(home / ".config" / "gtk-3.0" / "settings.ini", "w+") as f:
             f.write("[settings]\ngtk-icon-theme-name = Papirus-Dark")
-            
 
     if terminal == 'kitty':
         install(["kitty"])
@@ -180,6 +172,7 @@ def main():
             run_as_user("git", "pull", cwd=nvim_path)
 
         link_config("nvim")
+
 
 if __name__ == '__main__':
     main()
