@@ -2,111 +2,20 @@ import json
 import subprocess
 from pathlib import Path
 
+from libqtile.lazy import lazy
 from libqtile import bar, widget
-from libqtile.config import Screen
-from libqtile.widget import base
+from libqtile.config import Screen, Group, Output
 from libqtile.widget.base import _Widget as WidgetType
 
 from user_config import config
+from theme import THEME, colors
 
 
-THEME = {
-    "font": "FiraCode Nerd Font Mono",
+groups = [
+    Group(i)
+    for i in [" 1 ", " 2 ", " 3 ", " 4 ", " 5 ", " 6 ", " 7 ", " 8 ", " 9 "]
+]
 
-    "colors": {
-        # Neutral scale
-        "background": "#111318",
-        "background_transparent": "#111318C5",
-        "background_alt": "#161920",
-        "background_elevated": "#1C2028",
-        "background_dark": "#0B0D11",
-
-        "foreground": "#E6EAF0",
-        "foreground_muted": "#9AA3B2",
-        "foreground_dim": "#6F7785",
-
-        # Borders / separators
-        "border": "#343B47",
-        "border_subtle": "#252B34",
-
-        # Primary accent
-        "accent": "#4C8DFF",
-        "accent_hover": "#6AA0FF",
-        "accent_dim": "#285DA8",
-
-        # Semantic
-        "urgent": "#E26A75",
-
-        # GroupBox
-        "groupbox_current_screen": "#4C8DFF",
-        "groupbox_screen": "#3A414D",
-        "groupbox_other": "#20252D",
-
-        # Network graph
-        "net_fill": "#3D7059",
-        "net_graph": "#62A982",
-    },
-
-    "bar": {
-        "height": 30,
-        "margin": 5,
-    },
-
-    "groupbox": {
-        "border_width": 2,
-    },
-
-    "taskList": {
-        "width": 700,
-        "max_title_width": 150,
-    },
-
-    "network": {
-        "update_interval": 5,
-        "graph": {
-            "border_width": 0,
-            "line_width": 2,
-            "margin_x": 2,
-            "margin_y": 4,
-        },
-    },
-
-    "systray": {
-        "padding": 6,
-    },
-
-    "clock": {
-        "format": " %d/%m/%Y   %H:%M ",
-    },
-
-    "separator": {
-        "line_width": 3,
-        "padding": 0,
-        "size_percent": 100,
-        "subtle_color": "border_subtle",
-        "accent_color": "accent_dim",
-    },
-
-    "icons": {
-        "network": "󰌗",
-        "ip": "󰲐",
-    },
-
-    "font_sizes": {
-        "default": 16,
-        "icon": 24,
-        "ip": 14,
-    },
-
-    "padding": {
-        "default": 3,
-        "network_icon": 8,
-        "ip_icon": 5,
-        "network_text": 8,
-        "clock": 6,
-    },
-}
-colors = THEME["colors"]
 
 widget_defaults = {
     "font": THEME["font"],
@@ -122,6 +31,7 @@ class FixedtaskList(widget.TaskList):
     taskList normally uses bar.STRETCH. this make it STATIC so the two
     surrounding STRETCH spacers can centre it relative to the whole bar.
     """
+
     def __init__(self, width: int, **config):
         self.fixed_width = width
         super().__init__(**config)
@@ -176,9 +86,9 @@ def separator() -> widget.Sep:
         linewidth=separator["line_width"],
         padding=separator["padding"],
         size_percent=separator["size_percent"],
-        foreground=colors[separator["accent_color"]],
-        background=colors["background_dark"],
+        background=colors["background_alt"]
     )
+
 
 def network_widgets() -> list[WidgetType]:
     def currip() -> str:
@@ -227,6 +137,10 @@ def network_widgets() -> list[WidgetType]:
 
     background = colors["background_elevated"]
     graph = THEME["network"]["graph"]
+    mouse_callbacks = {
+        "Button1": lazy.spawn("nm-connection-editor"),
+        "Button3": lazy.spawn("nm-connection-editor")
+    }
 
     return [
         widget.TextBox(
@@ -235,6 +149,7 @@ def network_widgets() -> list[WidgetType]:
             foreground=colors["foreground_muted"],
             fontsize=THEME["font_sizes"]["icon"],
             padding=THEME["padding"]["network_icon"],
+            mouse_callbacks=mouse_callbacks,
         ),
 
         widget.NetGraph(
@@ -246,6 +161,7 @@ def network_widgets() -> list[WidgetType]:
             line_width=graph["line_width"],
             margin_x=graph["margin_x"],
             margin_y=graph["margin_y"],
+            mouse_callbacks=mouse_callbacks,
         ),
 
         widget.TextBox(
@@ -254,6 +170,7 @@ def network_widgets() -> list[WidgetType]:
             foreground=colors["foreground_muted"],
             fontsize=THEME["font_sizes"]["icon"],
             padding=THEME["padding"]["ip_icon"],
+            mouse_callbacks=mouse_callbacks,
         ),
 
         widget.GenPollText(
@@ -263,14 +180,12 @@ def network_widgets() -> list[WidgetType]:
             foreground=colors["foreground"],
             fontsize=THEME["font_sizes"]["ip"],
             padding=THEME["padding"]["network_text"],
+            mouse_callbacks=mouse_callbacks,
         ),
     ]
 
 
-def getDefaultWidgets(
-    is_primary: bool,
-) -> list[WidgetType]:
-
+def getDefaultWidgets(is_primary: bool) -> list[WidgetType]:
     def left() -> list[WidgetType]:
         return [
             widget.GroupBox(
@@ -336,12 +251,11 @@ def getDefaultWidgets(
 
         widgets.extend([
             separator(),
-
             widget.Clock(
                 background=colors["background_dark"],
                 foreground=colors["foreground"],
                 format=THEME["clock"]["format"],
-                padding=THEME["padding"]["clock"],
+                padding=THEME["clock"]["padding"],
             ),
         ])
 
@@ -366,3 +280,17 @@ def getDefaultScreenConfig(is_primary: bool) -> Screen:
         wallpaper=getWallpaperPath(),
         wallpaper_mode="fill",
     )
+
+
+screen_list = [
+    getDefaultScreenConfig(True),
+]
+
+
+def generate_screens(outputs: list[Output]) -> list[Screen]:
+    monitors_n = len(outputs)
+
+    while len(screen_list) < monitors_n:
+        screen_list.append(getDefaultScreenConfig(False))
+
+    return screen_list[:monitors_n]

@@ -1,12 +1,32 @@
-from libqtile.config import EzKey as Key, EzKeyChord as KeyChord
+from libqtile.config import EzKey as Key, EzKeyChord as KeyChord, Drag, Click
 from libqtile.lazy import lazy
 
+from screens import groups
 from user_config import config
 
 terminal = config["preferences"]["terminal"]
 browser = config["preferences"]["browser"]
 
 mod = 'mod4'
+
+mouse = [
+    Drag(
+        [mod], "Button1",
+        lazy.window.set_position_floating(),
+        start=lazy.window.get_position()
+    ),
+
+    Drag(
+        [mod], "Button3",
+        lazy.window.set_size_floating(),
+        start=lazy.window.get_size()
+    ),
+
+    Click(
+        [mod], "Button2",
+        lazy.window.bring_to_front()
+    ),
+]
 
 Key.modifier_keys = {
     "M": mod,
@@ -15,9 +35,10 @@ Key.modifier_keys = {
     "C": 'control',
 }
 
+# A list of available commands that can be bound to keys can be found
+# at https://docs.qtile.org/en/latest/manual/config/lazy.html
+
 keys = [
-    # A list of available commands that can be bound to keys can be found
-    # at https://docs.qtile.org/en/latest/manual/config/lazy.html
     # Switch between windows
     Key("M-h", lazy.layout.left(), desc="Move focus to left"),
     Key("M-j", lazy.layout.down(), desc="Move focus down"),
@@ -31,11 +52,12 @@ keys = [
     Key("M-S-j", lazy.layout.shuffle_down(), desc="Move window down"),
     Key("M-S-k", lazy.layout.shuffle_up(), desc="Move window up"),
     Key("M-S-l", lazy.layout.shuffle_right(), desc="Move window to the right"),
+
     # Grow windows. If current window is on the edge of screen and direction
     # will be to screen edge - window would shrink.
     Key("M-C-h", lazy.layout.shrink_main(), desc="Grow window to the left"),
     Key("M-C-l", lazy.layout.grow_main(), desc="Grow window to the right"),
-    Key("M-C-h", lazy.layout.grow_main(), desc="Grow window down"),
+    Key("M-C-j", lazy.layout.grow_main(), desc="Grow window down"),
     Key("M-C-k", lazy.layout.shrink_main(), desc="Grow window up"),
     Key("M-r", lazy.layout.normalize(), desc="Reset all window sizes"),
 
@@ -50,12 +72,13 @@ keys = [
         # For Bsp layout:
         # Split = Horizontaly splited panels
         # Unsplit = Verticaly splited panels
-        Key("s", lazy.layout.toggle_split(),
+        Key(
+            "s", lazy.layout.toggle_split(),
             desc="Toggle between split and unsplit sides of stack",
-            ),
+        ),
     ]),
 
-    # software keybindings
+    # spawn related keybindings
     Key("M-<Return>", lazy.spawn(terminal), desc="Launch terminal"),
     Key("M-b", lazy.spawn(browser), desc="Launch browser"),
     Key("M-m", lazy.spawn("rofi -show drun"), desc="Launch rofi"),
@@ -72,5 +95,17 @@ keys = [
     Key("M-C-r", lazy.reload_config(), desc="Reload the config"),
     Key("M-C-q", lazy.shutdown(), desc="Shutdown Qtile"),
     Key("M-p", lazy.spawncmd(), desc="Spawn a command using a prompt widget"),
-    Key("M-S-<space>", lazy.layout.flip(), desc="Move window focus to other window"),
+
+    Key(
+        "M-S-<space>",
+        lazy.layout.flip(),
+        desc="Move window focus to other window"
+    ),
 ]
+
+for i, group in enumerate(groups):
+    actual_key = str(i + 1)
+    keys.extend([
+        Key(f"M-{actual_key}", lazy.group[group.name].toscreen()),
+        Key(f"M-S-{actual_key}", lazy.window.togroup(group.name))
+    ])
