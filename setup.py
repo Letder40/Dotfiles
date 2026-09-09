@@ -147,7 +147,7 @@ def main():
     link_config("qtile")
     link_config("eza")
 
-    if Path("/usr/share/icons/Papirus-Dark").exists():
+    if not Path("/usr/share/icons/Papirus-Dark").exists():
         print("Downloading papirus dark theme")
         script = subprocess.Popen(["curl", "-fsSL", "https://git.io/papirus-icon-theme-install"],
                                   stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)

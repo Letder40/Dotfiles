@@ -4,7 +4,6 @@ from libqtile import hook
 
 from user_config import config
 
-
 @hook.subscribe.startup_once
 def autostart():
     if config["preferences"]["animations"]:
@@ -12,5 +11,4 @@ def autostart():
         subprocess.Popen(["picom", "-b", "--config", config_path.absolute().as_posix()])
 
     for entry in config["packages"]["init"]:
-        subprocess.run(["kill", "-9", entry["exec"].split()[0]])
         subprocess.Popen(entry["exec"].split())

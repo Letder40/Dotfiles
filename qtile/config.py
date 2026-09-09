@@ -1,9 +1,11 @@
+from typing import List
+
 from libqtile import layout
-from libqtile.config import Click, Drag, Key, Match, Group, Output
+from libqtile.config import Click, Drag, Key, Match, Group, Output, Screen
 from libqtile.lazy import lazy
 from libqtile.backend.wayland.inputs import InputConfig
 
-from screens import default_screen, widget_defaults
+from screens import getDefaultScreenConfig, widget_defaults
 from remaps import mod, keys
 import layouts
 from autostart import autostart
@@ -18,10 +20,10 @@ for i, group in enumerate(groups):
         Key([mod, "shift"], actual_key, lazy.window.togroup(group.name))
     ])
 
-def generate_screens(outputs: list[Output]):
+def generate_screens(outputs: list[Output]) -> List[Screen]:
     screen_list = []
     for output in outputs:
-        screen_list.append(default_screen)
+        screen_list.append(getDefaultScreenConfig(True))
 
     return screen_list
 
@@ -66,6 +68,3 @@ wl_input_rules = {
 }
 # java ui toolkits shit, i don't even use that shit but here is it, nobody knows what the future holds.
 wmname = "LG3D"
-
-# auto start of defined packages in config.toml
-autostart()
