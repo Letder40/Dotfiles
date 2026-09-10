@@ -1,115 +1,141 @@
 # Dotfiles
 
-My personal Arch Linux dotfiles and setup scripts.
+My personal Arch Linux desktop configuration and installer. It sets up a Qtile-based environment, installs the configured software, and links the repository's configuration files into the current user's home directory.
 
-This repository contains the configuration files and automation I use to reproduce my development environment, including Qtile, Neovim, terminal utilities, desktop applications, theming, and other system preferences.
 ## Features
 
-* Automated Arch Linux setup
-* Symlink-based configuration deployment
-* Qtile configuration
-* Configurable terminal, browser, wallpaper, and Nerd Font
-* Optional Neovim setup
-* Optional `eza` configuration and theme
-* Optional Picom animations
-* Automatic installation of selected packages
-* Automatic startup configuration for desktop utilities
+- Qtile configuration with multi-screen support, keybindings, autostart applications, and theming
+- Package installation through `pacman`
+- Configurable terminal, browser, wallpaper, and desktop applications
+- Optional Picom animations and Neovim configuration
+- Declarative installers for shell scripts and Git repositories
+- Symlink-based deployment with automatic backups of existing files
+- Zsh, Powerlevel10k, Kitty, Tmux, `eza`, and desktop utility configuration
+
+## Requirements
+
+- Arch Linux
+- Python 3.11 or newer
+- `sudo`
+- An internet connection for packages, scripts, and Git repositories
+
+The installer must be run as your regular user. It validates your `sudo` credentials at startup and elevates only the `pacman` commands used to install packages.
 
 ## Installation
 
-### 1. Clone the repository
+1. Clone the repository:
 
-```bash
-git clone https://github.com/Letder40/dotfiles.git
-cd dotfiles
-```
+   ```bash
+   git clone https://github.com/Letder40/dotfiles.git
+   cd dotfiles
+   ```
 
-### 2. Configure your setup
+2. Review and edit `config.toml`. In particular, check the package lists and every URL under `[[curl]]` before running downloaded scripts.
 
-Edit `config.toml` and adjust the preferences and software lists to match your system.
+3. Run the installer without `sudo`:
 
-### 3. Run the installer
+   ```bash
+   python setup.py
+   ```
 
-```bash
-sudo python setup.py
-```
+The installer will:
 
-The setup script will install the configured packages and create symlinks for the configuration directories contained in this repository.
+- install missing packages;
+- run configured remote installers and clone or update configured repositories;
+- set the configured GTK 3/4 icon theme and publish it to running X11 applications;
+- link the Qtile, `eza`, wallpaper, and Zsh configuration;
+- link Kitty, Picom, and Neovim configuration when their corresponding options are enabled.
 
-> Review `config.toml` and the setup script before running it as root, specially make sure to change the defined `user` to match yours.
+If a destination already exists, it is renamed with a timestamped `_bck` suffix before the new symlink is created. Running the installer again leaves correct symlinks and installed packages unchanged, and updates existing Git repositories with a fast-forward-only pull.
 
 ## Configuration
 
-Most installation and desktop preferences are controlled through `config.toml`.
-
-```toml
-[preferences]
-user="letder"
-terminal = "kitty"
-browser = "firefox"
-wallpaper = 0         # number -> will search ^wallpaper${number}\.* in ../wallpapers; if string -> absolute path to wallpaper image
-neovim = true         # Clones and setup this config https://github.com/Letder40/nvim-config/
-animations = true     # boolean setup picom
-
-# The following packages will be installed on setup accepts an array of strings with valid software names instalable with pacman
-# Change as much as you want
-
-[packages]
-# will be installed and auto started
-init = [
-    { exec="fcitx5 -d", package="fcitx5" },
-    { exec="volumeicon", package="volumeicon" },
-    { exec="udiskie --appindicator", package="udiskie" },
-    { exec="blueman", package="blueman" },
-    { exec="nm-applet", package="network-manager-applet" },
-    { exec="setxkbmap es", package="" },
-]
-
-others = [
-    "discord",
-    "bitwarden",
-    "notion",
-    "zathura",
-] 
-```
+Most installation and desktop preferences live in `config.toml`.
 
 ### Preferences
 
-The `[preferences]` section controls settings consumed by the setup scripts and Qtile configuration.
+```toml
+[preferences]
+terminal = "kitty"    # pacman package and command used by Qtile
+browser = "firefox"   # pacman package and command used by Qtile
+wallpaper = 4         # wallpaper4.png/.jpg/.jpeg from ~/media/wallpapers
+neovim = true         # install Neovim and the external configuration
+animations = true     # install, link, and start Picom
+icon_theme = "Papirus-Dark" # GTK and system-tray icon theme
+```
 
-You can configure:
+`wallpaper` can be either an integer matching a bundled `wallpaper<number>` file or a path to an existing image. Paths may start with `~`. If the configured image cannot be found, Qtile falls back to `wallpaper0.png`.
 
-* User
-* Terminal
-* Browser
-* Wallpaper
-* Nerd Font
-* Neovim installation
-* `eza` configuration
-* Picom animations
+The installer writes the icon theme to the GTK 3 and GTK 4 settings files. Qtile starts `xsettingsd` to expose the same setting to tray applications; rerunning the installer reloads an already-running daemon, so applications can update without logging out.
 
-### Software
+### Pacman packages
 
-The `[packages]` section defines packages that should be installed with `pacman`.
+```toml
+[packages]
+required = [
+    "qtile",
+    "lightdm",
+    "zsh",
+    "git",
+    "curl",
+]
 
-The package lists are separated by purpose for readability:
+autostart = [
+    { exec = "volumeicon", package = "volumeicon" },
+    { exec = "nm-applet", package = "network-manager-applet" },
+    { exec = "setxkbmap es", package = "" },
+]
 
-* `init` —  software that start automatically with the graphical session 
-* `others` — additional desktop applications
+desktop = [
+    "discord",
+    "bitwarden",
+    "zathura",
+]
+```
 
-You can freely add or remove packages as long as their names are valid Arch Linux package names.
+- `required` contains packages needed by the environment. Installation stops if these cannot be installed; edit this list carefully.
+- `autostart` pairs a command run once when Qtile starts with the package that provides it. Use an empty package string when no package needs to be installed.
+- `desktop` contains additional packages installed through `pacman`.
+
+The configured terminal and browser are also installed through `pacman`.
+
+### Remote shell installers
+
+Each `[[curl]]` entry downloads a script and runs it with `sh` as the current user:
+
+```toml
+[[curl]]
+url = "https://example.com/install.sh"
+params = "--example-option"
+check_path = "~/.example"
+required = false
+```
+
+- `url` is the script URL.
+- `params` is an optional string of arguments passed to the script.
+- `check_path` skips installation when that path already exists.
+- `required = true` makes a failure stop the setup; optional failures are logged instead.
+
+### Git repositories
+
+Each `[[git]]` entry defines a repository to clone or update as the current user:
+
+```toml
+[[git]]
+src = "https://github.com"
+repo = "romkatv/powerlevel10k.git"
+path = "~/.oh-my-zsh/custom/themes/powerlevel10k"
+required = true
+```
+
+The clone URL is formed as `<src>/<repo>`. New clones use a depth of one; existing repositories are updated with `git pull --ff-only`. As with remote installers, `required` controls whether a failure stops the setup.
 
 ## Customization
 
-The automated setup is only the starting point.
+The installer is a starting point. Individual configurations can be changed directly in their repository directories, including `qtile/`, `kitty/`, `picom/`, `tmux/`, `eza/`, and `zsh/`.
 
-For more advanced customization, edit the individual configuration files directly. Most components can be modified independently without changing the installation process.
-
-My Neovim configuration is maintained separately:
-
-[Letder40/nvim-config](https://github.com/Letder40/nvim-config)
+The Neovim configuration is maintained separately at [Letder40/nvim-config](https://github.com/Letder40/nvim-config) and is cloned into `nvim/` when enabled.
 
 ## Demo
 
-![Setup Demo 1](./demo1.jpg)
-![Setup Demo 2](./demo2.jpg)
+![Setup Demo](./demo.png)

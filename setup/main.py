@@ -3,6 +3,7 @@ from pathlib import Path
 import shutil
 
 from .install_methods import curl_sh, git_clone_or_pull, pacman, pacman_required
+from .gtk import configure_icon_theme
 from .links import link_config, link_with_backup
 from .config import config
 from .output import fatal, log
@@ -50,10 +51,7 @@ def setup() -> None:
             required=git_target.get("required", False),
         )
 
-    gtk_config = home / ".config" / "gtk-3.0" / "settings.ini"
-    gtk_config.parent.mkdir(parents=True, exist_ok=True)
-    gtk_config.write_text("[settings]\ngtk-icon-theme-name = Papirus-Dark")
-    log("updated", gtk_config)
+    configure_icon_theme(config["preferences"]["icon_theme"], home)
 
     link_with_backup(
         home / "media" / "wallpapers",
