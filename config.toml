@@ -71,7 +71,6 @@ autostart = [
 [packages.base]
 required = [
     "qtile",
-    "zsh",
     "git",
     "curl",
     "wget",
