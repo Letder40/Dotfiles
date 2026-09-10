@@ -18,7 +18,6 @@ required = [
     "curl",
     "wget",
     "eza",
-    "tmux",
     "zoxide",
     "fd",
     "ripgrep",
@@ -48,6 +47,12 @@ autostart = [
 
 # The following packages will be installed on setup accepts an array of strings with valid software names instalable with pacman
 # Change as much as you want
+utils = [
+    "bat",
+    "tmux",
+    "zathura",
+] 
+
 desktop = [
     "discord",
     "bitwarden",
@@ -75,12 +80,13 @@ required = true
 
 [[git]]
 src = "https://github.com"
-repo = "tmux-plugins/tpm"
-path = "~/.tmux/plugins/tpm"
+repo = "romkatv/powerlevel10k.git"
+path = "~/.oh-my-zsh/custom/themes/powerlevel10k"
 required = true
 
 [[git]]
 src = "https://github.com"
-repo = "romkatv/powerlevel10k.git"
-path = "~/.oh-my-zsh/custom/themes/powerlevel10k"
-required = true
+repo = "tmux-plugins/tpm"
+path = "~/.tmux/plugins/tpm"
+required = false
+

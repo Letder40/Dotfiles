@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 from pathlib import Path
 import shutil
+import subprocess
 
 from .install_methods import curl_sh, git_clone_or_pull, pacman, pacman_required
 from .gtk import configure_icon_theme
@@ -8,6 +9,48 @@ from .links import link_config, link_with_backup
 from .config import config
 from .output import fatal, log
 from .sudo import cache_sudo, is_root
+
+def _tmux_setup() -> None:
+    log("tmux", "Installing tmux")
+
+    if not pacman(["tmux"]):
+        log("error", "tmux installation has failled")
+        return
+
+    sh_tpm_script = subprocess.run(
+        [
+            "sh",
+            Path("~/.tmux/plugins/tpm/scripts/install_plugins.sh").expanduser()
+        ],
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+    )
+
+    if sh_tpm_script.returncode != 0:
+        log("error", "tpm plugins installation has failled")
+        return
+
+    link_config("tmux")
+
+
+def _nvim_setup(repository_root: Path) -> None:
+    log("neovim", "Installing neovim")
+
+    if not pacman(["neovim"]):
+        log("error", "neovim installation has failled")
+        return
+
+    pacman(["neovim"])
+
+    is_success = git_clone_or_pull(
+        "https://github.com/Letder40/nvim-config.git",
+        repository_root / "nvim",
+    )
+
+    if not is_success:
+        return
+
+    link_config("nvim")
 
 
 def setup() -> None:
@@ -79,9 +122,6 @@ def setup() -> None:
         link_config("picom")
 
     if config["preferences"]["neovim"]:
-        pacman(["neovim"])
-        git_clone_or_pull(
-            "https://github.com/Letder40/nvim-config.git",
-            repository_root / "nvim",
-        )
-        link_config("nvim")
+        _nvim_setup(repository_root)
+
+    _tmux_setup()
