@@ -1,4 +1,3 @@
-import os
 from pathlib import Path
 import shutil
 import subprocess
@@ -53,11 +52,6 @@ def _nvim_setup(repository_root: Path) -> None:
         return
 
     link_config("nvim")
-
-
-def _rofi_setup() -> None:
-    if install_with_deps("rofi", config["rofi"]):
-        link_config("rofi")
 
 
 def _resolve_packages(entry: list[dict]) -> list[str]:
@@ -187,8 +181,8 @@ def setup() -> None:
     if "eza" in config["packages"]["utils"]:
         link_config("eza")
 
-    if config["preferences"]["rofi"]:
-        _rofi_setup()
+    if "rofi" in config["packages"]["others"]:
+        link_config("rofi")
 
     if config["preferences"]["tmux"]:
         _tmux_setup()
