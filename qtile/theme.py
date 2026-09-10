@@ -1,7 +1,8 @@
 from typing import Any
+from user_config import config
 
 THEME: dict[str, Any] = {
-    "font": "FiraCode Nerd Font Mono",
+    "font": config["preferences"]["font"]["name"],
 
     "colors": {
         # Neutral scale

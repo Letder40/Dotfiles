@@ -7,6 +7,7 @@ import subprocess
 
 from .output import log
 
+
 class CaseSensitveConfigParser(configparser.ConfigParser):
     """
     preserve casing:
@@ -21,6 +22,7 @@ class CaseSensitveConfigParser(configparser.ConfigParser):
     """
     def optionxform(self, optionstr: str) -> str:
         return optionstr
+
 
 def _write_gtk_settings(path: Path, icon_theme: str) -> None:
     settings = CaseSensitveConfigParser()

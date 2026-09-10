@@ -4,8 +4,8 @@ from libqtile.lazy import lazy
 from screens import groups
 from user_config import config
 
-terminal = config["preferences"]["terminal"]
-browser = config["preferences"]["browser"]
+terminal = config["preferences"]["terminal"]["name"]
+browser = config["preferences"]["browser"]["name"]
 
 mod = "mod4"
 
