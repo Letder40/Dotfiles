@@ -1,17 +1,38 @@
 [preferences]
-user="letder"
-terminal = "kitty"
-browser = "firefox"
+terminal = "kitty"    # valid pacman package name
+browser = "firefox"   # valid pacman package name
 wallpaper = 4         # number -> will search ^wallpaper${number}\.* in ../wallpapers; if string -> absolute path to wallpaper image
 neovim = true         # Clones and setup this config https://github.com/Letder40/nvim-config/
 animations = true     # boolean setup picom
 
-# The following packages will be installed on setup accepts an array of strings with valid software names instalable with pacman
-# Change as much as you want
 
 [packages]
+# Changing this may break some features or the complete setup
+required = [
+    "qtile",
+    "lightdm",
+    "lightdm-gtk-greeter",
+    "zsh",
+    "git",
+    "curl",
+    "wget",
+    "zoxide",
+    "fd",
+    "ripgrep",
+    "fzf",
+    "thefuck",
+    "zoxide",
+    "pyenv",
+    "python-psutil",
+    "zsh-syntax-highlighting",
+    "papirus-icon-theme",
+    "flameshot",
+    "rofi",
+]
+
 # will be installed and auto started
-init = [
+# Change as much as you want
+autostart = [
     { exec="fcitx5 -d", package="fcitx5" },
     { exec="volumeicon", package="volumeicon" },
     { exec="udiskie --appindicator", package="udiskie" },
@@ -20,9 +41,35 @@ init = [
     { exec="setxkbmap es", package="" },
 ]
 
-others = [
+# The following packages will be installed on setup accepts an array of strings with valid software names instalable with pacman
+# Change as much as you want
+desktop = [
     "discord",
     "bitwarden",
-    "notion",
     "zathura",
 ] 
+
+# software that will be installed using curl -fsSL ... | sh
+[[curl]]
+url = "https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh"
+params = "--keep-zshrc"
+check_path = "~/.oh-my-zsh"
+required = true
+
+[[curl]]
+url = "https://bun.com/install"
+check_path = "~/.bun"
+required = false
+
+# repositories that will be cloned in the defined path
+[[git]]
+src = "https://github.com"
+repo = "zsh-users/zsh-syntax-highlighting.git"
+path = "~/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting"
+required = true
+
+[[git]]
+src = "https://github.com"
+repo = "romkatv/powerlevel10k.git"
+path = "~/.oh-my-zsh/custom/themes/powerlevel10k"
+required = true

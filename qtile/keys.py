@@ -7,7 +7,7 @@ from user_config import config
 terminal = config["preferences"]["terminal"]
 browser = config["preferences"]["browser"]
 
-mod = 'mod4'
+mod = "mod4"
 
 mouse = [
     Drag(
@@ -30,9 +30,9 @@ mouse = [
 
 Key.modifier_keys = {
     "M": mod,
-    "A": 'mod1',
-    "S": 'shift',
-    "C": 'control',
+    "A": "mod1",
+    "S": "shift",
+    "C": "control",
 }
 
 # A list of available commands that can be bound to keys can be found
@@ -103,8 +103,8 @@ keys = [
     ),
 ]
 
-for i, group in enumerate(groups):
-    actual_key = str(i + 1)
+for group_index, group in enumerate(groups):
+    actual_key = str(group_index + 1)
     keys.extend([
         Key(f"M-{actual_key}", lazy.group[group.name].toscreen()),
         Key(f"M-S-{actual_key}", lazy.window.togroup(group.name))

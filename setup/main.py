@@ -2,70 +2,88 @@
 from pathlib import Path
 import shutil
 
-from .pacman import install
-from .sudo import is_root
-from .links import link_config, link_with_backup, hard_link
-from .user import home
-from .git import git_clone_or_pull
-
-from .required import required
-from .config import config_path, config
+from .install_methods import curl_sh, git_clone_or_pull, pacman, pacman_required
+from .links import link_config, link_with_backup
+from .config import config
+from .output import fatal, log
+from .sudo import cache_sudo, is_root
 
 
-def setup():
-    if not is_root():
-        print("You must be root in order to install the specified software")
-        exit(1)
+def setup() -> None:
+    if is_root():
+        fatal("this script cannot be run as root")
+
+    if shutil.which("sudo") is None:
+        fatal("sudo is required to install packages")
 
     if shutil.which("pacman") is None:
-        print("This configuration is made and tested only for Arch Linux")
-        exit(1)
+        fatal("this configuration only supports Arch Linux")
 
-    hard_link(config_path, Path.cwd() / "qtile" / "config.toml")
+    cache_sudo()
 
-    install(required)
-    install([package["package"] for package in config["packages"]["init"]])
-    install(config["packages"]["others"])
+    home = Path.home()
+    repository_root = Path(__file__).resolve().parent.parent
 
-    with open(home / ".config" / "gtk-3.0" / "settings.ini", "w+") as f:
-        f.write("[settings]\ngtk-icon-theme-name = Papirus-Dark")
+    pacman_required(config["packages"]["required"])
+    pacman([package["package"] for package in config["packages"]["autostart"]])
+    pacman(config["packages"]["desktop"])
 
     browser = config["preferences"]["browser"]
-    install([browser])
+    pacman([browser])
 
     terminal = config["preferences"]["terminal"]
-    install([terminal])
+    pacman([terminal])
+
+    for curl_target in config["curl"]:
+        check_path = curl_target.get("check_path")
+        curl_sh(
+            curl_target["url"],
+            params=curl_target.get("params", ""),
+            check_path=Path(check_path) if check_path else None,
+            required=curl_target.get("required", False),
+        )
+
+    for git_target in config["git"]:
+        git_clone_or_pull(
+            f"{git_target['src']}/{git_target['repo']}",
+            Path(git_target["path"]),
+            required=git_target.get("required", False),
+        )
+
+    gtk_config = home / ".config" / "gtk-3.0" / "settings.ini"
+    gtk_config.parent.mkdir(parents=True, exist_ok=True)
+    gtk_config.write_text("[settings]\ngtk-icon-theme-name = Papirus-Dark")
+    log("updated", gtk_config)
 
     link_with_backup(
         home / "media" / "wallpapers",
-        Path.cwd() / "wallpapers"
+        repository_root / "wallpapers",
     )
 
     link_with_backup(
         home / ".zshrc",
-        Path.cwd() / "zsh" / "zshrc"
+        repository_root / "zsh" / "zshrc",
     )
 
     link_with_backup(
-        home / "p10k.zsh",
-        Path.cwd() / "zsh" / "p10k.zsh"
+        home / ".p10k.zsh",
+        repository_root / "zsh" / "p10k.zsh",
     )
 
     link_config("qtile")
     link_config("eza")
 
-    if terminal == 'kitty':
-        install(["kitty"])
+    if terminal == "kitty":
         link_config("kitty")
 
     if config["preferences"]["animations"]:
-        install(["picom"])
+        pacman(["picom"])
         link_config("picom")
 
     if config["preferences"]["neovim"]:
-        install(["neovim"])
+        pacman(["neovim"])
         git_clone_or_pull(
-            Path.cwd() / "nvim",
-            "https://github.com/Letder40/nvim-config.git"
+            "https://github.com/Letder40/nvim-config.git",
+            repository_root / "nvim",
         )
         link_config("nvim")

@@ -1,4 +1,5 @@
 from pathlib import Path
+import shlex
 import subprocess
 
 from libqtile import hook
@@ -9,8 +10,8 @@ from user_config import config
 def autostart():
     if config["preferences"]["animations"]:
         config_path = Path.home() / ".config" / "picom" / "picom.conf"
-        cmd = f"picom -b --config {config_path.absolute().as_posix()}"
-        subprocess.Popen(cmd.split())
+        command = f"picom -b --config {config_path.absolute().as_posix()}"
+        subprocess.Popen(shlex.split(command))
 
-    for entry in config["packages"]["init"]:
-        subprocess.Popen(entry["exec"].split())
+    for entry in config["packages"]["autostart"]:
+        subprocess.Popen(shlex.split(entry["exec"]))

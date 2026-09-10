@@ -13,5 +13,7 @@ required = [
     "zoxide",
     "pyenv",
     "zsh-syntax-highlighting",
-    "papirus-icon-theme"
+    "papirus-icon-theme",
+    "flameshot",
+    "rofi",
 ]

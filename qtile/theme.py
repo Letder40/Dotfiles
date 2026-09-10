@@ -46,7 +46,7 @@ THEME: dict[str, Any] = {
         "border_width": 2,
     },
 
-    "taskList": {
+    "task_list": {
         "width": 700,
         "max_title_width": 150,
     },

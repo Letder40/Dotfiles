@@ -1,24 +1,21 @@
-from pathlib import Path
-from subprocess import run
-from os import getuid, setuid, setgid
+import subprocess
+from os import getuid
 
-from .user import gid, uid
+from .output import fatal, log
 
 
 def is_root() -> bool:
     return getuid() == 0
 
 
-def run_as_user(*args: str, cwd: Path | None = None):
-    if not is_root():
-        return
-
-    run(
-        args,
-        check=True,
-        cwd=cwd,
-        preexec_fn=lambda: (
-            setgid(gid),
-            setuid(uid),
-        )
+def cache_sudo() -> None:
+    log("sudo", "caching credentials")
+    result = subprocess.run(
+        ["sudo", "-v"],
+        stderr=subprocess.PIPE,
+        text=True,
     )
+
+    if result.returncode != 0:
+        error = result.stderr.strip() or f"sudo exited with code {result.returncode}"
+        fatal(f"could not cache sudo credentials: {error}")

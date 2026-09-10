@@ -2,9 +2,9 @@ import json
 import subprocess
 from pathlib import Path
 
-from libqtile.lazy import lazy
 from libqtile import bar, widget
-from libqtile.config import Screen, Group, Output
+from libqtile.config import Group, Output, Screen
+from libqtile.lazy import lazy
 from libqtile.widget.base import _Widget as WidgetType
 
 from user_config import config
@@ -12,8 +12,10 @@ from theme import THEME, colors
 
 
 groups = [
-    Group(i)
-    for i in [" 1 ", " 2 ", " 3 ", " 4 ", " 5 ", " 6 ", " 7 ", " 8 ", " 9 "]
+    Group(group_name)
+    for group_name in [
+        " 1 ", " 2 ", " 3 ", " 4 ", " 5 ", " 6 ", " 7 ", " 8 ", " 9 "
+    ]
 ]
 
 
@@ -24,17 +26,17 @@ widget_defaults = {
 }
 
 
-class FixedtaskList(widget.TaskList):
+class FixedTaskList(widget.TaskList):
     """
-    taskList with a fixed width.
+    Task list with a fixed width.
 
-    taskList normally uses bar.STRETCH. this make it STATIC so the two
+    TaskList normally uses bar.STRETCH. This makes it STATIC so the two
     surrounding STRETCH spacers can centre it relative to the whole bar.
     """
 
-    def __init__(self, width: int, **config):
+    def __init__(self, width: int, **widget_config):
         self.fixed_width = width
-        super().__init__(**config)
+        super().__init__(**widget_config)
 
     def _configure(self, qtile, bar_object):
         super()._configure(qtile, bar_object)
@@ -42,7 +44,7 @@ class FixedtaskList(widget.TaskList):
         self.length = self.fixed_width
 
 
-def getWallpaperPath() -> str:
+def get_wallpaper_path() -> str:
     fallback = (
         Path.home()
         / "media"
@@ -80,18 +82,18 @@ def getWallpaperPath() -> str:
 
 
 def separator() -> widget.Sep:
-    separator = THEME["separator"]
+    separator_config = THEME["separator"]
 
     return widget.Sep(
-        linewidth=separator["line_width"],
-        padding=separator["padding"],
-        size_percent=separator["size_percent"],
+        linewidth=separator_config["line_width"],
+        padding=separator_config["padding"],
+        size_percent=separator_config["size_percent"],
         background=colors["background_alt"]
     )
 
 
 def network_widgets() -> list[WidgetType]:
-    def currip() -> str:
+    def current_ip() -> str:
         try:
             raw_routes = subprocess.check_output(
                 "ip -j route show default".split(),
@@ -103,10 +105,10 @@ def network_widgets() -> list[WidgetType]:
             if not routes:
                 return "offline"
 
-            ip = routes[0].get("prefsrc")
+            ip_address = routes[0].get("prefsrc")
 
-            if ip:
-                return ip
+            if ip_address:
+                return ip_address
 
             interface = routes[0].get("dev")
 
@@ -132,6 +134,7 @@ def network_widgets() -> list[WidgetType]:
             json.JSONDecodeError,
             KeyError,
             IndexError,
+            OSError,
         ):
             return "offline"
 
@@ -174,7 +177,7 @@ def network_widgets() -> list[WidgetType]:
         ),
 
         widget.GenPollText(
-            func=currip,
+            func=current_ip,
             update_interval=THEME["network"]["update_interval"],
             background=background,
             foreground=colors["foreground"],
@@ -185,7 +188,7 @@ def network_widgets() -> list[WidgetType]:
     ]
 
 
-def getDefaultWidgets(is_primary: bool) -> list[WidgetType]:
+def get_default_widgets(is_primary: bool) -> list[WidgetType]:
     def left() -> list[WidgetType]:
         return [
             widget.GroupBox(
@@ -221,10 +224,10 @@ def getDefaultWidgets(is_primary: bool) -> list[WidgetType]:
                 background=background,
             ),
 
-            FixedtaskList(
-                width=THEME["taskList"]["width"],
+            FixedTaskList(
+                width=THEME["task_list"]["width"],
                 border=colors["accent"],
-                max_title_width=THEME["taskList"]["max_title_width"],
+                max_title_width=THEME["task_list"]["max_title_width"],
                 background=background,
             ),
 
@@ -268,29 +271,29 @@ def getDefaultWidgets(is_primary: bool) -> list[WidgetType]:
     ]
 
 
-def getDefaultScreenConfig(is_primary: bool) -> Screen:
+def get_default_screen_config(is_primary: bool) -> Screen:
     return Screen(
         top=bar.Bar(
-            getDefaultWidgets(is_primary),
+            get_default_widgets(is_primary),
             THEME["bar"]["height"],
             background=colors["background_dark"],
             margin=THEME["bar"]["margin"],
         ),
 
-        wallpaper=getWallpaperPath(),
+        wallpaper=get_wallpaper_path(),
         wallpaper_mode="fill",
     )
 
 
 screen_list = [
-    getDefaultScreenConfig(True),
+    get_default_screen_config(True),
 ]
 
 
 def generate_screens(outputs: list[Output]) -> list[Screen]:
-    monitors_n = len(outputs)
+    monitor_count = len(outputs)
 
-    while len(screen_list) < monitors_n:
-        screen_list.append(getDefaultScreenConfig(False))
+    while len(screen_list) < monitor_count:
+        screen_list.append(get_default_screen_config(False))
 
-    return screen_list[:monitors_n]
+    return screen_list[:monitor_count]
