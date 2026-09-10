@@ -13,5 +13,8 @@ def autostart():
         command = f"picom -b --config {config_path.absolute().as_posix()}"
         subprocess.Popen(shlex.split(command))
 
-    for entry in config["packages"]["autostart"]:
+    for entry in config["packages"]["base"]["init"]["autostart"]:
+        subprocess.Popen(shlex.split(entry["exec"]))
+
+    for entry in config["packages"]["init"]["autostart"]:
         subprocess.Popen(shlex.split(entry["exec"]))

@@ -3,6 +3,7 @@ import subprocess
 from pathlib import Path
 
 from .output import fatal, log
+from .git import git_clone_or_pull
 
 
 def pacman_has(package: str) -> bool:
@@ -13,13 +14,15 @@ def pacman_has(package: str) -> bool:
     ).returncode == 0
 
 
-def pacman(packages: list[str]) -> bool:
+def pacman(packages: list[str | None]) -> bool:
     packages = list(dict.fromkeys(package for package in packages if package))
 
     missing = []
 
     for package in packages:
-        if pacman_has(package):
+        if not package:
+            continue
+        elif pacman_has(package):
             log("unchanged", f"{package} is already installed")
         else:
             missing.append(package)
@@ -105,60 +108,30 @@ def curl_sh(
     return True
 
 
-def git_clone_or_pull(url: str, dst: Path, required: bool = False) -> bool:
-    dst = dst.expanduser()
+def install_with_deps(name: str, deps: dict) -> bool:
+    packages = [package.get("name", None) for package in deps.get("package", [])]
+    success = pacman(packages)
+    if not success:
+        log("error - package", f"could not satisfy all dependencies of {name}")
+        return False
 
-    if not dst.exists():
-        log("git", f"cloning {url} -> {dst}")
-
-        result = subprocess.run(
-            ["git", "clone", "--depth", "1", url, str(dst)],
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.PIPE,
-            text=True,
-        )
-
-        if result.returncode != 0:
-            error = result.stderr.strip() or f"git exited with code {result.returncode}"
-            message = f"could not clone {url}: {error}"
-
-            if required:
-                fatal(message)
-
-            log("error", message)
+    for dep in deps.get("curl", []):
+        check_path = dep.get("check_path", None)
+        if check_path is not None:
+            check_path = Path(check_path)
+        success = curl_sh(dep["url"], dep.get("params", ""), check_path)
+        if not success:
+            log("error - curl", f"could not satisfy all dependencies of {name}")
             return False
 
-        log("cloned", f"{url} -> {dst}")
-        return True
+    for dep in deps.get("git", []):
+        path = dep.get("path", None)
+        if path is not None:
+            path = Path(path)
 
-    if not (dst / ".git").exists():
-        message = f"{dst} exists but is not a git repository"
+        success = git_clone_or_pull(f"{dep["src"]}/{dep["repo"]}", path)
+        if not success:
+            log("error - git", f"could not satisfy all dependencies of {name}")
+            return False
 
-        if required:
-            fatal(message)
-
-        log("error", message)
-        return False
-
-    log("git", f"updating {dst}")
-
-    result = subprocess.run(
-        ["git", "pull", "--ff-only"],
-        cwd=dst,
-        stdout=subprocess.DEVNULL,
-        stderr=subprocess.PIPE,
-        text=True,
-    )
-
-    if result.returncode != 0:
-        error = result.stderr.strip() or f"git exited with code {result.returncode}"
-        message = f"could not update {dst}: {error}"
-
-        if required:
-            fatal(message)
-
-        log("error", message)
-        return False
-
-    log("updated", str(dst))
     return True
