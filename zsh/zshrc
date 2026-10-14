@@ -1,36 +1,36 @@
-ZSH_CONFIG_DIR="${${${(%):-%x}:A}:h}/config"
+typeset -r ZSH_DIR="${${${(%):-%x}:A}:h}"
+typeset -r ZSH_MODULES=("${(@f)$(python3 - "$ZSH_DIR/config.toml" \
+<<'PYTHON3'
+import sys
+import tomllib
 
-# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
-if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
-  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
-fi
+with open(sys.argv[1], "rb") as f:
+    data = tomllib.load(f)
 
-### Path ###
-source "$ZSH_CONFIG_DIR/path.zsh"
+modules = sorted(
+    [(m["priority"], m["filename"]) for m in data["modules"]]
+)
 
-### OMZ ###
-source "$ZSH_CONFIG_DIR/omz.zsh"
-source "$ZSH/oh-my-zsh.sh"
+modules_set = set()
+unique_modules = []
 
-# To customize the prompt, run `p10k configure` or edit the sourced file below.
-source "$ZSH_CONFIG_DIR/p10k.zsh"
+for _, module in modules:
+    if module in modules_set:
+        continue
 
-### FUNCTIONS ###
-source "$ZSH_CONFIG_DIR/functions.zsh"
+    modules_set.add(module)
+    unique_modules.append(module)
 
-### ALIAS ###
-source "$ZSH_CONFIG_DIR/aliases.zsh"
+print("\n".join(unique_modules))
+PYTHON3
+)}")
 
-### KEYMAPS ###
-command -v nvim &>/dev/null && bindkey -v
+typeset -r ZSH_MODULES_DIR="$ZSH_DIR/modules"
 
-### TOOLS SETUP ###
-source "$ZSH_CONFIG_DIR/tools.zsh"
+zshmods () {
+    echo "$ZSH_MODULES" | tr ' ' '\n' | xargs -I {} echo -e "loaded module: {}"
+}
 
-# User configuration
-export MANPATH="/usr/local/man:$MANPATH"
-export EDITOR="nvim"
-export VISUAL="$EDITOR"
-export LANG=es_ES.UTF-8
-# Compilation flags
-# export ARCHFLAGS="-arch x86_64"
+for module in ${ZSH_MODULES[@]}; do
+    source "$ZSH_MODULES_DIR/$module"
+done

@@ -16,3 +16,5 @@ HIST_STAMPS="dd/mm/yyyy"
 zstyle ':omz:update' mode auto  # update automatically without asking
 
 export ZSH="$HOME/.oh-my-zsh"
+
+source "$ZSH/oh-my-zsh.sh"
